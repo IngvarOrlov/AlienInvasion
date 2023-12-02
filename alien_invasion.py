@@ -3,6 +3,9 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
+from star import Star
+from random import randint
 
 class AlienInvasion:
 	def __init__(self):
@@ -15,13 +18,18 @@ class AlienInvasion:
 		pygame.display.set_caption(" ---Alien Invasion--- ")
 		self.ship = Ship(self)	#создается экземпляр обьекта корабля	
 		self.bullets = pygame.sprite.Group()
+		self.aliens = pygame.sprite.Group()
+		self.stars = pygame.sprite.Group()
+		self._create_fleet()
 		self.clock = pygame.time.Clock()
 	def run_game(self):
 		"""Основной цикл игры"""
 		while True:
+			self.make_star()
 			self._check_events()
 			self.ship.update()
 			self.bullets.update()
+			self.stars.update()
 			self._update_screen()
 
 	def _check_events(self):
@@ -50,13 +58,32 @@ class AlienInvasion:
 			self.ship.moving_right = False
 		elif event.key == pygame.K_LEFT:
 			self.ship.moving_left = False
-						
+					
+	def _create_fleet(self):
+	#создание флота
+		alien = Alien(self)
+		alien_width = alien.rect.width
+		available_space_x = self.settings.screen_width - (2*alien_width)
+		number_aliens_x = available_space_x // (2*alien_width)
+
+		for alien_number in range(number_aliens_x):
+			self._create_alien(alien_number)
+
+	def _create_alien(self,alien_number):
+		alien = Alien(self)
+		alien_width = alien.rect.width
+		alien.x = alien_width + 2*alien_width * alien_number
+		alien.rect.x = alien.x
+		self.aliens.add(alien)
 
 	def _update_screen(self):
-		self.screen.fill(self.settings.bg_color)	
+		self.screen.fill(self.settings.bg_color)
+		for star in self.stars.sprites():
+			star.draw_star()
 		self.ship.blitme()
 		for bullet in self.bullets.sprites():
 			bullet.draw_bullet()
+		self.aliens.draw(self.screen)	
 		pygame.display.flip()
 		self.clock.tick(self.settings.FPS)	
 
@@ -65,7 +92,11 @@ class AlienInvasion:
 			new_bullet = Bullet(self)
 			self.bullets.add(new_bullet)
 
-
+	def make_star(self):
+#Мелькающие звезды. Имитация скорости		
+		if randint(0, 15) == 7:
+			new_star = Star(self)
+			self.stars.add(new_star)
 
 
 if __name__=='__main__':
