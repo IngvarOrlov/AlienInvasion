@@ -12,11 +12,24 @@ class Ship():
 		self.moving_right = False
 		self.moving_left = False
 	def update(self):
+			# движение корабля влево-право в зависимости от положения переключателей
 		if self.moving_right and self.rect.right < self.screen_rect.right:
 			self.x += self.settings.ship_speed
+
 		if self.moving_left and self.rect.left > 0:
 			self.x -= self.settings.ship_speed
-		self.rect.x = self.x	
+		self.rect.x = self.x
+			
+			# изменение спрайта корабля при движении
+		if 	self.moving_right and self.moving_left:
+			self.image = pygame.image.load('images/ship_small.png')
+		elif self.moving_left:
+			self.image = pygame.image.load('images/ship_left.png')
+		elif self.moving_right:
+			self.image = pygame.image.load('images/ship_small.png')
+		else:
+			self.image = pygame.image.load('images/ship_small.png')
+	
 	def blitme(self):
 		self.screen.blit(self.image, self.rect) #рисует корабль в текущей позиции
 		
