@@ -11,6 +11,7 @@ class Ship():
 		#Флаги перемещения
 		self.moving_right = False
 		self.moving_left = False
+		
 	def update(self):
 			# движение корабля влево-право в зависимости от положения переключателей
 		if self.moving_right and self.rect.right < self.screen_rect.right:
